@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedSync HomeCare - Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
+    header { background-color: #007bff; color: white; padding: 10px; text-align: center; font-size: 1.5em; }
+    nav { display: flex; justify-content: center; background: #007bff; }
+    nav button { background: #0056b3; color: white; padding: 10px 20px; border: none; margin: 5px; cursor: pointer; transition: background 0.3s; }
+    nav button:hover, nav button.active { background: #004494; }
+    .content { display: none; padding: 20px; }
+    .content.active { display: block; }
+    .card { background: white; padding: 15px; margin: 10px; width: 90%; max-width: 600px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; }
+    .container { display: flex; flex-direction: column; align-items: center; }
+    .animation { width: 100%; max-width: 200px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <header>MedSync HomeCare Dashboard</header>
+  
+  <!-- Navigation Tabs -->
+  <nav>
+    <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="tab-button" onclick="showTab('vitals')">Vitals Monitoring</button>
+    <button class="tab-button" onclick="showTab('alerts')">Alerts</button>
+    <button class="tab-button" onclick="showTab('profile')">User Profile</button>
+    <button class="tab-button" onclick="showTab('settings')">Settings</button>
+  </nav>
+  
+  <!-- Dashboard Content -->
+  <div id="dashboard" class="content active">
+    <div class="container">
+      <div class="card">
+        <h3>Health Overview</h3>
+        <div class="animation" id="healthAnimation"></div>
+        <p>Heart Rate: 72 bpm</p>
+        <p>Blood Pressure: 120/80 mmHg</p>
+        <p>Oxygen Level: 98%</p>
+      </div>
+      <div class="card">
+        <h3>Daily Health Progress</h3>
+        <canvas id="progressChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Medication Reminders</h3>
+        <div class="animation" id="medicationAnimation"></div>
+        <p>Next Dose: 2:00 PM</p>
+        <button onclick="alert('Reminder set!')">Set Reminder</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Vitals Monitoring Content -->
+  <div id="vitals" class="content">
+    <div class="container">
+      <div class="card">
+        <h3>Heart Rate Target vs. Actual</h3>
+        <canvas id="vitalsChart"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Alerts Content -->
+  <div id="alerts" class="content">
+    <div class="container">
+      <div id="alertAnimation" class="animation"></div>
+      <div class="card">
+        <h3>Set Alert Thresholds</h3>
+        <label for="heartRate">Heart Rate Threshold:</label>
+        <input type="number" id="heartRate" placeholder="e.g., 100 bpm"><br><br>
+        <button onclick="alert('Alert settings saved!')">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile Content -->
+  <div id="profile" class="content">
+    <div class="container">
+      <div class="card">
+        <h3>User Profile</h3>
+        <p><strong>Name:</strong> John Doe</p>
+        <p><strong>Email:</strong> johndoe@example.com</p>
+        <p><strong>Phone:</strong> +1 234-567-8901</p>
+        <button onclick="alert('Profile settings saved!')">Edit Profile</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Settings Content -->
+  <div id="settings" class="content">
+    <div class="container">
+      <div class="card">
+        <h3>Account Settings</h3>
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Your Name"><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Your Email"><br><br>
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" placeholder="Your Phone"><br><br>
+        <button onclick="alert('Settings saved!')">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for Tab Functionality, Animations, and Charts -->
+  <script>
+    // Function to toggle tabs
+    function showTab(tabId) {
+      document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+
+    // Load animations on page load
+    lottie.loadAnimation({
+      container: document.getElementById('healthAnimation'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets3.lottiefiles.com/packages/lf20_s8mxblzg.json'
+    });
+    lottie.loadAnimation({
+      container: document.getElementById('medicationAnimation'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json'
+    });
+    lottie.loadAnimation({
+      container: document.getElementById('alertAnimation'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets10.lottiefiles.com/packages/lf20_jkoqzqak.json'
+    });
+
+    // Initialize Daily Progress Chart
+    const progressCtx = document.getElementById('progressChart').getContext('2d');
+    new Chart(progressCtx, {
+      type: 'line',
+      data: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        datasets: [
+          {
+            label: 'Heart Rate',
+            data: [72, 75, 70, 78, 74, 76, 73],
+            borderColor: '#ff6384',
+            fill: false
+          },
+          {
+            label: 'Blood Pressure',
+            data: [120, 118, 121, 119, 122, 120, 117],
+            borderColor: '#36a2eb',
+            fill: false
+          },
+          {
+            label: 'Medication Adherence (%)',
+            data: [100, 95, 90, 100, 95, 100, 98],
+            borderColor: '#4bc0c0',
+            fill: false
+          }
+        ]
+      },
+      options: { responsive: true }
+    });
+
+    // Initialize Vitals Target vs Actual Chart
+    const vitalsCtx = document.getElementById('vitalsChart').getContext('2d');
+    new Chart(vitalsCtx, {
+      type: 'line',
+      data: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        datasets: [
+          {
+            label: 'Actual Heart Rate',
+            data: [72, 75, 70, 78, 74, 76, 73],
+            borderColor: '#ff6384',
+            fill: false
+          },
+          {
+            label: 'Target Heart Rate',
+            data: [70, 72, 72, 72, 72, 72, 72],
+            borderColor: '#ff9f40',
+            borderDash: [5, 5],
+            fill: false
+          },
+          {
+            label: 'Actual Blood Pressure',
+            data: [120, 118, 121, 119, 122, 120, 117],
+            borderColor: '#36a2eb',
+            fill: false
+          },
+          {
+            label: 'Target Blood Pressure',
+            data: [120, 120, 120, 120, 120, 120, 120],
+            borderColor: '#ffcd56',
+            borderDash: [5, 5],
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

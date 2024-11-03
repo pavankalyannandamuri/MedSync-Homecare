@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedSync HomeCare - Alerts</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; }
+    header { background-color: #007bff; color: white; padding: 10px; text-align: center; }
+    .container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+  </style>
+</head>
+<body>
+  <header><h1>Alerts & Notifications</h1></header>
+  <div class="container">
+    <h3>Set Alert Thresholds</h3>
+    <label for="heartRate">Heart Rate Threshold:</label>
+    <input type="number" id="heartRate" placeholder="e.g., 100 bpm"><br><br>
+    <label for="bloodPressure">Blood Pressure Threshold:</label>
+    <input type="number" id="bloodPressure" placeholder="e.g., 140"><br><br>
+    <button onclick="alert('Alert settings saved!')">Save Settings</button>
+  </div>
+</body>
+</html>

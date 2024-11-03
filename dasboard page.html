@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedSync HomeCare - Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
+    header { background-color: #007bff; color: white; padding: 10px; text-align: center; }
+    .container { display: flex; flex-direction: column; align-items: center; margin: 20px; }
+    .card { background: white; padding: 15px; margin: 10px; width: 90%; max-width: 600px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+    .card h3 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <header><h1>MedSync HomeCare Dashboard</h1></header>
+  <div class="container">
+    <div class="card">
+      <h3>Health Overview</h3>
+      <p>Heart Rate: 72 bpm</p>
+      <p>Blood Pressure: 120/80 mmHg</p>
+      <p>Oxygen Level: 98%</p>
+    </div>
+    <div class="card">
+      <h3>Medication Reminders</h3>
+      <p>Next Dose: 2:00 PM</p>
+      <button onclick="alert('Reminder set!')">Set Reminder</button>
+    </div>
+    <div class="card">
+      <h3>Alerts</h3>
+      <p>No alerts at the moment.</p>
+    </div>
+  </div>
+</body>
+</html>
