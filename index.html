@@ -1,216 +1,356 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedSync HomeCare - Dashboard</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
-    header { background-color: #007bff; color: white; padding: 10px; text-align: center; font-size: 1.5em; }
-    nav { display: flex; justify-content: center; background: #007bff; }
-    nav button { background: #0056b3; color: white; padding: 10px 20px; border: none; margin: 5px; cursor: pointer; transition: background 0.3s; }
-    nav button:hover, nav button.active { background: #004494; }
-    .content { display: none; padding: 20px; }
-    .content.active { display: block; }
-    .card { background: white; padding: 15px; margin: 10px; width: 90%; max-width: 600px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; }
-    .container { display: flex; flex-direction: column; align-items: center; }
-    .animation { width: 100%; max-width: 200px; margin: 0 auto; }
-  </style>
-</head>
-<body>
-  <header>MedSync HomeCare Dashboard</header>
-  
-  <!-- Navigation Tabs -->
-  <nav>
-    <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
-    <button class="tab-button" onclick="showTab('vitals')">Vitals Monitoring</button>
-    <button class="tab-button" onclick="showTab('alerts')">Alerts</button>
-    <button class="tab-button" onclick="showTab('profile')">User Profile</button>
-    <button class="tab-button" onclick="showTab('settings')">Settings</button>
-  </nav>
-  
-  <!-- Dashboard Content -->
-  <div id="dashboard" class="content active">
-    <div class="container">
-      <div class="card">
-        <h3>Health Overview</h3>
-        <div class="animation" id="healthAnimation"></div>
-        <p>Heart Rate: 72 bpm</p>
-        <p>Blood Pressure: 120/80 mmHg</p>
-        <p>Oxygen Level: 98%</p>
-      </div>
-      <div class="card">
-        <h3>Daily Health Progress</h3>
-        <canvas id="progressChart"></canvas>
-      </div>
-      <div class="card">
-        <h3>Medication Reminders</h3>
-        <div class="animation" id="medicationAnimation"></div>
-        <p>Next Dose: 2:00 PM</p>
-        <button onclick="alert('Reminder set!')">Set Reminder</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Vitals Monitoring Content -->
-  <div id="vitals" class="content">
-    <div class="container">
-      <div class="card">
-        <h3>Heart Rate Target vs. Actual</h3>
-        <canvas id="vitalsChart"></canvas>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Alerts Content -->
-  <div id="alerts" class="content">
-    <div class="container">
-      <div id="alertAnimation" class="animation"></div>
-      <div class="card">
-        <h3>Set Alert Thresholds</h3>
-        <label for="heartRate">Heart Rate Threshold:</label>
-        <input type="number" id="heartRate" placeholder="e.g., 100 bpm"><br><br>
-        <button onclick="alert('Alert settings saved!')">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- User Profile Content -->
-  <div id="profile" class="content">
-    <div class="container">
-      <div class="card">
-        <h3>User Profile</h3>
-        <p><strong>Name:</strong> John Doe</p>
-        <p><strong>Email:</strong> johndoe@example.com</p>
-        <p><strong>Phone:</strong> +1 234-567-8901</p>
-        <button onclick="alert('Profile settings saved!')">Edit Profile</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Settings Content -->
-  <div id="settings" class="content">
-    <div class="container">
-      <div class="card">
-        <h3>Account Settings</h3>
-        <label for="name">Name:</label>
-        <input type="text" id="name" placeholder="Your Name"><br><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" placeholder="Your Email"><br><br>
-        <label for="phone">Phone:</label>
-        <input type="tel" id="phone" placeholder="Your Phone"><br><br>
-        <button onclick="alert('Settings saved!')">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JavaScript for Tab Functionality, Animations, and Charts -->
-  <script>
-    // Function to toggle tabs
-    function showTab(tabId) {
-      document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
-    }
-
-    // Load animations on page load
-    lottie.loadAnimation({
-      container: document.getElementById('healthAnimation'),
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: 'https://assets3.lottiefiles.com/packages/lf20_s8mxblzg.json'
-    });
-    lottie.loadAnimation({
-      container: document.getElementById('medicationAnimation'),
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: 'https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json'
-    });
-    lottie.loadAnimation({
-      container: document.getElementById('alertAnimation'),
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: 'https://assets10.lottiefiles.com/packages/lf20_jkoqzqak.json'
-    });
-
-    // Initialize Daily Progress Chart
-    const progressCtx = document.getElementById('progressChart').getContext('2d');
-    new Chart(progressCtx, {
-      type: 'line',
-      data: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        datasets: [
-          {
-            label: 'Heart Rate',
-            data: [72, 75, 70, 78, 74, 76, 73],
-            borderColor: '#ff6384',
-            fill: false
-          },
-          {
-            label: 'Blood Pressure',
-            data: [120, 118, 121, 119, 122, 120, 117],
-            borderColor: '#36a2eb',
-            fill: false
-          },
-          {
-            label: 'Medication Adherence (%)',
-            data: [100, 95, 90, 100, 95, 100, 98],
-            borderColor: '#4bc0c0',
-            fill: false
-          }
-        ]
-      },
-      options: { responsive: true }
-    });
-
-    // Initialize Vitals Target vs Actual Chart
-    const vitalsCtx = document.getElementById('vitalsChart').getContext('2d');
-    new Chart(vitalsCtx, {
-      type: 'line',
-      data: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        datasets: [
-          {
-            label: 'Actual Heart Rate',
-            data: [72, 75, 70, 78, 74, 76, 73],
-            borderColor: '#ff6384',
-            fill: false
-          },
-          {
-            label: 'Target Heart Rate',
-            data: [70, 72, 72, 72, 72, 72, 72],
-            borderColor: '#ff9f40',
-            borderDash: [5, 5],
-            fill: false
-          },
-          {
-            label: 'Actual Blood Pressure',
-            data: [120, 118, 121, 119, 122, 120, 117],
-            borderColor: '#36a2eb',
-            fill: false
-          },
-          {
-            label: 'Target Blood Pressure',
-            data: [120, 120, 120, 120, 120, 120, 120],
-            borderColor: '#ffcd56',
-            borderDash: [5, 5],
-            fill: false
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
+    <title>MedSync HomeCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
         }
-      }
-    });
-  </script>
-</body>
-</html>
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-in-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .hover-grow:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        .connection-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <!-- Navbar -->
+        <nav class="bg-gradient-to-r from-blue-500 to-teal-500 p-4 text-white flex justify-between items-center">
+            <div class="text-2xl font-bold">MedSync HomeCare</div>
+            <div class="space-x-4">
+                <a href="#" class="hover:underline">Dashboard</a>
+                <a href="#" class="hover:underline">Vitals Monitoring</a>
+                <a href="#" class="hover:underline">Alerts</a>
+                <a href="#" class="hover:underline">Profile</a>
+                <a href="#" class="hover:underline">Settings</a>
+                <a href="#" class="hover:underline">Devices</a>
+                <a href="#" class="hover:underline">Family</a>
+                <a href="#" class="hover:underline">Marketplace</a>
+                <a href="#" class="hover:underline">CareChat</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex-grow container mx-auto p-4">
+            <!-- Dashboard -->
+            <div id="dashboard" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Health Metrics -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                        <h3 class="text-xl font-bold mb-2">Health Overview</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Heart Rate:</span>
+                                <span>72 bpm</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Blood Pressure:</span>
+                                <span>120/80 mmHg</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Oxygen Levels:</span>
+                                <span>98%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Daily Progress -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                        <h3 class="text-xl font-bold mb-2">Daily Progress</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Steps:</span>
+                                <span>5000</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Calories Burned:</span>
+                                <span>200 kcal</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Medication Reminders -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                        <h3 class="text-xl font-bold mb-2">Medication Reminders</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Morning Medication:</span>
+                                <span>8:00 AM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Evening Medication:</span>
+                                <span>8:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vitals Monitoring -->
+            <div id="vitals-monitoring" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Vitals Monitoring</h2>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                    <h3 class="text-xl font-bold mb-2">Target vs. Actual</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Heart Rate:</span>
+                            <span>72 bpm / 70-100 bpm</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Blood Pressure:</span>
+                            <span>120/80 mmHg / 110-130/70-90 mmHg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div id="alerts" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Alerts</h2>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                    <h3 class="text-xl font-bold mb-2">Notifications</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Welcome to MedSync HomeCare</span>
+                            <span>Just now</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Explore the Dashboard</span>
+                            <span>5 mins ago</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Abnormal Heart Rate Detected</span>
+                            <span>10 mins ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div id="profile" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Profile</h2>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                    <h3 class="text-xl font-bold mb-2">User Information</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Name:</span>
+                            <span>John Doe</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Age:</span>
+                            <span>75</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Medical Conditions:</span>
+                            <span>Hypertension, Diabetes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div id="settings" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Settings</h2>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                    <h3 class="text-xl font-bold mb-2">Notification Preferences</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Email Notifications:</span>
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>SMS Notifications:</span>
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices -->
+            <div id="devices" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Health Monitoring Devices</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Pill Dispenser -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a smart pill dispenser with multiple compartments for organizing daily medication doses" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/9Jg0YP5Af4S7WCemHumolmeK5K8T4vH53gtzMYGKOcnm2bhnA.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Smart Pill Dispenser</h3>
+                        <p>Automates medication reminders and dispenses the correct dose at the scheduled time.</p>
+                    </div>
+                    <!-- Smart Watch -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a smart watch displaying health metrics such as heart rate and steps" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/FYTFlm1Qk26rARNXJDSNXmgeqdND6M95TFIv2MnNMnsq9W4JA.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Smart Watch</h3>
+                        <p>Monitors heart rate, steps, and other vital signs, providing real-time health data.</p>
+                    </div>
+                    <!-- Fall Detector -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a fall detector device that can be worn around the neck or wrist" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/xSgbdaY8VdJbCxN71XfHJIzP7cnR7Iu0ZrwbESzhmCEp9W4JA.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Fall Detector</h3>
+                        <p>Detects falls and sends immediate alerts to caregivers and healthcare providers.</p>
+                    </div>
+                    <!-- Blood Pressure Monitor -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a digital blood pressure monitor with a cuff and display screen" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/KspSAsCbclZaC5UizCDPeZuEJXcWUwg087XUYPGNHwhn9W4JA.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Blood Pressure Monitor</h3>
+                        <p>Measures and records blood pressure, providing data for trend analysis and alerts.</p>
+                    </div>
+                    <!-- Oxygen Monitor -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a fingertip oxygen monitor displaying oxygen saturation levels" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/welxNHLcqK0iekxmYQiyAlk7R8hFdSnPWZYK7etYle7Qt3CPB.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Oxygen Monitor</h3>
+                        <p>Tracks oxygen saturation levels, ensuring patients maintain healthy oxygen levels.</p>
+                    </div>
+                    <!-- Glucose Monitor -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in relative">
+                        <img alt="Image of a glucose monitor with a test strip and display screen" class="w-full h-48 object-cover rounded mb-4" src="https://storage.googleapis.com/a1aa/image/x31j9MvXeCypUakqeJYDYZENrCJeSFnRITEib4QRRckj2bhnA.jpg">
+                        <div class="connection-icon">
+                            <i class="fas fa-wifi text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Glucose Monitor</h3>
+                        <p>Monitors blood glucose levels, helping patients manage diabetes effectively.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Members -->
+            <div id="family" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Family Members</h2>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                    <h3 class="text-xl font-bold mb-2">Family Member Status</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Jane Doe</span>
+                            <span>Heart Rate: 75 bpm</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Michael Doe</span>
+                            <span>Blood Pressure: 130/85 mmHg</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded shadow hover-grow slide-in mt-4">
+                    <h3 class="text-xl font-bold mb-2">Add Family Member</h3>
+                    <form>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Enter name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="age">Age</label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="age" type="number" placeholder="Enter age">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="conditions">Medical Conditions</label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="conditions" type="text" placeholder="Enter medical conditions">
+                        </div>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                            Add Family Member
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Marketplace -->
+            <div id="marketplace" class="mb-8 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Marketplace</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Device Purchase -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                        <h3 class="text-xl font-bold mb-2">Purchase Devices</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Smart Pill Dispenser</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Smart Watch</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Fall Detector</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Blood Pressure Monitor</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Oxygen Monitor</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Glucose Monitor</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Medical Insurance Plans -->
+                    <div class="bg-white p-4 rounded shadow hover-grow slide-in">
+                        <h3 class="text-xl font-bold mb-2">Medical Insurance Plans</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Basic Plan</span>
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    Buy Now
+                                </button>
+                            </div
